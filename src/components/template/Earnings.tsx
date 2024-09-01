@@ -16,7 +16,6 @@ const Earnings = ({ status = "Completed" }) => {
   const {
     data: serviceDetail = [],
     isLoading,
-    isError,
   } = useGetServiceDetails();
   const { data: pieData, isLoading: isPieDataLoading } =
     useGetMonthlyEarnings();
