@@ -1,0 +1,576 @@
+          {data.map((entry, index) => (
+            <>
+              {/* <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              /> */}
+            </>
+          ))}
+
+
+          import { Topic } from "@/constants/Topic";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/atoms/ui/toggle-group";
+import React, { useEffect } from "react";
+
+const Topics = ({ topics, setData, edit }) => {
+  const [selectedTopics, setSelectedTopics] = React.useState(Array.isArray(topics) ? topics : []);
+
+  useEffect(() => {
+    setSelectedTopics(Array.isArray(topics) ? topics : []);
+  }, [topics]);
+
+  const handleChange = (topic) => {
+    if (edit) {
+      let updatedTopics;
+      if (selectedTopics.includes(topic)) {
+        updatedTopics = selectedTopics.filter((t) => t !== topic);
+      } else {
+        updatedTopics = [...selectedTopics, topic];
+      }
+      setSelectedTopics(updatedTopics);
+      setData((prevData) => ({ ...prevData, expertise: updatedTopics }));
+    }
+  };
+
+  return (
+    <div>
+      <ToggleGroup type="multiple" variant="outline" className="flex flex-wrap">
+        <div className="flex flex-wrap gap-2">
+          {Topic.map((topic, x) => (
+            <ToggleGroupItem
+              key={x}
+              value={topic}
+              aria-checked={selectedTopics.includes(topic)}
+              data-state={selectedTopics.includes(topic) ? "on" : "off"}
+              onClick={() => handleChange(topic)}
+              disabled={!edit}
+              className={`${
+                selectedTopics.includes(topic) ? "bg-primary text-primary-foreground" : ""
+              } ${!edit && "cursor-not-allowed opacity-10"}`}
+            >
+              {topic}
+            </ToggleGroupItem>
+          ))}
+        </div>
+      </ToggleGroup>
+    </div>
+  );
+};
+
+export default Topics;
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { Topic } from "@/constants/Topic";
+import { ToggleGroup, ToggleGroupItem } from "@/components/atoms/ui/toggle-group";
+
+const Topics = ({ topics, setData, edit = true }) => {
+  const [selectedTopics, setSelectedTopics] = useState(Array.isArray(topics) ? topics : []);
+
+  useEffect(() => {
+    setSelectedTopics(Array.isArray(topics) ? topics : []);
+  }, [topics]);
+
+  const handleChange = (updatedTopics) => {
+    if (edit) {
+      setSelectedTopics(updatedTopics);
+      setData((prevData) => ({ ...prevData, expertise: updatedTopics }));
+      console.log(updatedTopics);
+    }
+  };
+
+  return (
+    <div>
+      <ToggleGroup 
+        type="multiple" 
+        variant="outline" 
+        value={selectedTopics}
+        onValueChange={handleChange}
+        className="flex flex-wrap gap-2"
+      >
+        {Topic.map((topic, x) => (
+          <ToggleGroupItem
+            key={x}
+            value={topic}
+            disabled={!edit}
+            className={`
+              ${selectedTopics.includes(topic) ? "bg-primary text-primary-foreground" : ""}
+              ${!edit && "cursor-not-allowed opacity-50"}
+              px-3 py-2 rounded-md text-sm
+            `}
+          >
+            {topic}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
+  );
+};
+
+export default Topics;
+
+
+
+
+seseion dashboard
+import { Button } from "../atoms/ui/button";
+import React, { useEffect, useState } from "react";
+import ChartIcon from "@assets/chart-icon.svg";
+import BookIcon from "@assets/bookmark-icon.svg";
+import PageIcon from "@assets/page-icon.svg";
+
+import { Card } from "@components/atoms/ui/card";
+import DateRangeSelector from "../molecules/DateRange";
+import axios from "axios";
+import { DynamicBarChart } from "../organisms/DynamicBarChart";
+import { DynamicPieChart } from "../organisms/DynamicPieChart";
+import useGetStats from "@/queries/dashboard/use-get-stats";
+import useGetMonthlyServiceBookings from "@/queries/dashboard/use-get-monthly-service-bookings";
+import useGetMonthlyEarnings from "@/queries/dashboard/use-get-monthlyearnings";
+import useGetSessionBookings from "@/queries/dashboard/use-get-session-bookings";
+
+const COLORS = ["#FF6384", "#FF9F40", "#4BC0C0", "#36A2EB"];
+
+const Dashboard = () => {
+  const [dateRange, setDateRange] = useState("alldate");
+  // const [filteredStats, setFilteredStats] = useState({
+  //   sessions: 0,
+  //   bookings: 0,
+  //   mentoring: "0 mins",
+  // });
+  const [topSessions, setTopSessions] = useState([]);
+  // const [barData, setBarData] = useState([] || "n/a");
+  // const [pieData, setPieData] = useState([] || "n/a");
+  const handleDateRangeChange = (range) => {
+    setDateRange(range);
+  };
+
+  const {data:filteredStats = {}, isLoading,isError} = useGetStats(dateRange);
+  const {data:barData =[]} = useGetMonthlyEarnings();
+  // const {data:topSessions = [] || {}} = useGetMonthlyServiceBookings();
+  const {data:pieData= []} = useGetSessionBookings()
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    const performance = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/appointment/session-bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        setTopSessions(response.data);
+      } catch (error) {}
+    };
+
+    performance();
+
+  //   // const barStats = async () => {
+  //   //   try {
+  //   //     const response = await axios.get(
+  //   //       "http://localhost:3000/api/appointment/monthly-service-bookings",
+  //   //       {
+  //   //         headers: {
+  //   //           Authorization: `Bearer ${token}`,
+  //   //         },
+  //   //       },
+  //   //     );
+  //   //     setBarData(response.data);
+  //   //   } catch (error) {}
+  //   // };
+
+  //   // barStats();
+
+  //   const pieStats = async () => {
+  //     const response = await axios.get(
+  //       "http://localhost:3000/api/appointment/monthly-earnings",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+
+  //     setPieData(response.data);
+  //   };
+
+  //   pieStats();
+  }, [dateRange]);
+
+  const PerformanceBar = ({ performance, color }) => (
+    <div className="w-full bg-gray-200 rounded-full h-1.5">
+      <div
+        className={`${color} h-1.5 rounded-full`}
+        style={{ width: `${performance}%` }}
+      />
+    </div>
+  );
+
+  return (
+    <div className="h-screen flex flex-col justify-between p-8 gap-5 bg-[#F7F6F9]">
+      <div className="flex-[0.5] flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Hello, Vats</h1>
+        <Button className="bg-[#6425FE] ">+ Create Service</Button>
+      </div>
+      <div className="flex-[4] flex gap-0 justify-between">
+        <div className="bg-[#FFFFFF] w-[60%] rounded-3xl ">
+          <div className="mx-auto p-8 flex flex-col justify-between h-full">
+            <div className="flex justify-between">
+              <div className="flex flex-col">
+                <h1 className="text-2xl font-semibold mb-4">Your, Dashboard</h1>
+                <p className="text-center mb-8 font-light text-md">
+                  Track your insights at one place
+                </p>
+              </div>
+              <DateRangeSelector onDateRangeChange={handleDateRangeChange} />
+            </div>
+            <div className="flex justify-between p-1">
+              <Card className="card bg-[#FFE2E5] border-none">
+                <div className="flex flex-col justify-start gap-y-4 p-4">
+                  <div className="h-[40px]">
+                    <img src={ChartIcon} alt="chart" />
+                  </div>
+                  <h2 className="text-3xl font-bold">
+                    {filteredStats.sessionsCompleted}
+                  </h2>
+                  <p>Sessions Completed</p>
+                  <p className="text-green-500">+20% from last month</p>
+                </div>
+              </Card>
+              <Card className="card bg-[#FFF4DE] border-none">
+                <div className="flex flex-col justify-start gap-y-4 p-4">
+                  <div className="h-[40px]">
+                    <img src={PageIcon} alt="chart" />
+                  </div>
+                  <h2 className="text-3xl font-bold">
+                    {filteredStats.totalBookings}
+                  </h2>
+                  <p>Total bookings</p>
+                  <p className="text-green-500">+20% from last month</p>
+                </div>
+              </Card>
+              <Card className="card bg-[#DCFCE7] border-none">
+                <div className="flex flex-col justify-start gap-y-4 p-4">
+                  <div className="h-[40px]">
+                    <img src={BookIcon} alt="chart" />
+                  </div>
+                  <h2 className="text-3xl font-bold">
+                    {filteredStats.mentoringTime}
+                  </h2>
+                  <p>Mentoring Times</p>
+                  <p className="text-green-500">+20% from last month</p>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+        <div className="bg-[#FFFFFF] w-[38%] rounded-3xl p-3">
+          <h2 className="text-3xl font-semibold mb-4">Bookings</h2>
+          <div>
+            <DynamicBarChart barData={barData} />
+          </div>
+        </div>
+      </div>
+      <div className="flex-[4] flex justify-between">
+        <div className="bg-[#FFFFFF] w-[60%] rounded-3xl border">
+          <div className="p-4 max-w-4xl mx-auto">
+            <h3 className="text-lg font-bold mb-4">Top sessions</h3>
+            <table className="w-full text-left border-separate border-spacing-y-4">
+              <thead className="text-gray-500">
+                <tr>
+                  <th className="px-4 py-2">S.No</th>
+                  <th className="px-4 py-2">Session title</th>
+                  <th className="px-4 py-2">Performance</th>
+                  <th className="px-4 py-2">No. of bookings</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topSessions.map((session, x) => (
+                  <tr
+                    key={session.id}
+                    className="bg-white rounded-lg shadow-sm"
+                  >
+                    <td className="px-4 py-2 text-gray-500">
+                      {String(x + 1).padStart(2, "0")}
+                    </td>
+                    <td className="px-4 py-2 font-medium">{session.title}</td>
+                    <td className="px-4 py-2">
+                      <PerformanceBar
+                        performance={session.performance}
+                        color={session.color}
+                      />
+                    </td>
+                    <td className="px-4 py-2 font-medium">
+                      <span
+                        className={`px-3 py-1 ${session.borderColor} ${session.textColor} border rounded-full`}
+                      >
+                        {session.totalBookings}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="bg-[#FFFFFF] w-[38%] rounded-3xl p-3">
+          <h1 className="text-3xl font-semibold mb-4">Earnings</h1>
+          <DynamicPieChart pieData={pieData} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
+
+
+export default Dashboard;
+
+
+
+Profile components
+import React, { useEffect, useState } from "react";
+import { Button } from "../atoms/ui/button";
+import { Label } from "../atoms/ui/label";
+import { Input } from "../atoms/ui/input";
+import axios from "axios";
+import TopicsProfile from "../molecules/TopicsProfile";
+import WeekdayTimePickerProfile from "../molecules/Availability/TimePickerProfile";
+import { toast } from "react-hot-toast";
+import useGetprofileDetails from "@/queries/profile/use-get-profile";
+
+const Profile = () => {
+  const [edit, setEdit] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [profileName, setProfileName] = useState("");
+  const [socialAccount, setSocialAccount] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [upiId, setUpiId] = useState("");
+  // const [profile, setProfile] = useState();
+  // const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [topics, setTopics] = useState([]);
+  const [availability, setAvailability] = useState([]);
+
+  const handleProfileChange = async () => {
+    try {
+      console.log(firstName)
+    const data = new FormData()
+    data.append("firstName", firstName);
+    data.append("lastName", lastName);
+    data.append("profileName", profileName);
+    data.append("socialAccount", socialAccount);
+    data.append("phoneNumber", phoneNumber);
+    data.append("upiId", upiId);
+    data.append("expertise", JSON.stringify(topics));
+    data.append("availability", JSON.stringify(availability));
+    if (selectedFile) {
+      data.append("profilePhoto", selectedFile);
+    }
+    
+    const token = localStorage.getItem("accessToken")
+     
+    console.log('FormData entries:');
+    for (let [key, value] of data.entries()) {
+      console.log(key, value);
+    }
+    const response = await axios.patch(
+      "http://localhost:3000/api/users/update-profile",
+       data ,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
+      },
+    );
+    toast.success("Profile Updated Successfully")
+    setEdit((prev) => !prev);
+    } catch (error) {
+      toast.error("Error updating profile")
+    }
+    
+    
+  };
+
+  // const {data: profile,isLoading,isError} = useGetprofileDetails()
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    console.log("Stored", token);
+    const fetchProfile = async () => {
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      try {
+        const response = await axios.get("http://localhost:3000/api/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const profileData = response.data;
+        console.log(profileData);
+        setProfile(profileData);
+        setFirstName(profileData.firstName);
+        setLastName(profileData.lastName);
+        setProfileName(profileData.profileName);
+        setSocialAccount(profileData.socialAccount);
+        setPhoneNumber(profileData.phoneNumber);
+        setUpiId(profileData.upiId);
+        setTopics(profileData.expertise);
+        setAvailability(profileData.availability);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  
+
+  return (
+    <div className="h-full flex flex-col p-8 gap-8 bg-[#F7F6F9]">
+      <div className="flex items-center justify-between p-1 relative">
+        <h1 className="text-4xl font-semibold">Your Profile</h1>
+        {!edit ? (
+          <Button
+            className="bg-[#6425FE]"
+            onClick={() => setEdit((prev) => !prev)}
+          >
+            Edit
+          </Button>
+        ) : (
+          <Button className="bg-[#6425FE]" onClick={handleProfileChange}>
+            Save Changes
+          </Button>
+        )}
+      </div>
+      <div>
+        {preview ? (
+          <img
+            src={preview}
+            alt="Preview"
+            className="w-24 h-24 rounded-full mr-2 border"
+          />
+        ) : (
+          <img
+            src="/path/to/profile.jpg>"
+            alt="Preview"
+            className="w-24 h-24 rounded-full mr-2 border"
+          />
+        )}
+        <input type="file" id="files" className="hidden" onChange={handleFileChange}/>
+        <label for="files" className="pointer text-[#6425FE] text-[14px] font-medium" >Upload Photo</label>
+        {/* <button onClick={handleUpload}>Upload</button> */}
+      </div>
+      <div className="flex flex-col w-[40%] gap-10">
+        <div className="flex flex-col bg-white p-3 rounded-2xl z-10 gap-5">
+          <div className="flex gap-[10px]">
+            <div>
+              <Label>First Name</Label>
+              <Input
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                disabled={!edit}
+              />
+            </div>
+            <div>
+              <Label>Last Name</Label>
+              <Input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                disabled={!edit}
+              />
+            </div>
+          </div>
+          <div>
+            <Label>Your Profile Name</Label>
+            <div className="flex items-center border rounded-md">
+              <p className="border-r px-2 text-sm">deltafactor.in/</p>
+              <Input
+                className="border-0"
+                value={profileName}
+                onChange={(e) => setProfileName(e.target.value)}
+                disabled={!edit}
+              />
+            </div>
+          </div>
+          <div>
+            <Label>Connect your Social Account</Label>
+            <div className="flex items-center border rounded-md">
+              <p className="border-r px-2 text-sm">https://</p>
+              <Input
+                className="border-0"
+                value={socialAccount}
+                onChange={(e) => setSocialAccount(e.target.value)}
+                disabled={!edit}
+              />
+            </div>
+          </div>
+          <div>
+            <Label>Your Mobile Number</Label>
+            <div className="flex items-center border rounded-md">
+              <p className="border-r px-2 text-sm font-thin">+91</p>
+              <Input
+                className="border-0"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                disabled={!edit}
+              />
+            </div>
+            <p className="text-[10px]">
+              You'll receive WhatsApp updates on this number. It is very crucial
+              for further communications.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col h-26 bg-white rounded-2xl p-3 gap-4">
+          <h3>Payment Details for Payout</h3>
+          <div>
+            <Label>UPI ID</Label>
+            <Input
+              value={upiId}
+              onChange={(e) => setUpiId(e.target.value)}
+              disabled={!edit}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col h-26 bg-white rounded-2xl p-3 gap-4">
+          <h3>Additional Details</h3>
+          <TopicsProfile topics={topics} setData={setTopics} edit={edit} />
+        </div>
+        <div>
+          <WeekdayTimePickerProfile data={availability} setData={setAvailability} edit={edit}/>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
