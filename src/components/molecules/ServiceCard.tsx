@@ -55,7 +55,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ setSelectedStep }) => {
   const [duration, setDuration] = useState<string>("");
   const [svgContent, setSvgContent] = useState<string | undefined>();
 
-  const { data: services = [], isLoading, error } = useGetAllServices();
+  const { data: services = [], isLoading } = useGetAllServices();
   const updateServiceMutation = useUpdateService();
   const deleteServiceMutation = useDeleteService();
 

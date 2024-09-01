@@ -1,4 +1,4 @@
-import { type UseMutationResult, useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import axios, { type AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 
@@ -29,7 +29,7 @@ const updateService = async (data: ProfileData) => {
 
 export const useUpdateProfile =  (): UseMutationResult<void,AxiosError,ProfileData> => {
   return useMutation({
-    mutationFn: (params: UpdateProfileParams) => updateService(params),
+    mutationFn: (params) => updateService(params),
     onSuccess: () => {
       toast.success("Profile updated successfully");
     },
@@ -40,7 +40,7 @@ export const useUpdateProfile =  (): UseMutationResult<void,AxiosError,ProfileDa
   });
 };
 
-const getSignedUrl = async (fileType) => {
+const getSignedUrl = async (fileType: unknown) => {
     const token = localStorage.getItem("accessToken")
 
     const url = new URL(`${import.meta.env.VITE_BASE_URL}/users/s3/signed-url?fileType=${fileType}`)
@@ -62,7 +62,7 @@ export const useGetSignedUrl = () :UseMutationResult<void, AxiosError>=> {
     )
 }
 
-const uploadToS3 = async (params) => {
+const uploadToS3 = async (params: any) => {
 
   const {signedUrl,file} = params
 

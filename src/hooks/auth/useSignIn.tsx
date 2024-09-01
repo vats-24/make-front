@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { QUERY_KEY } from "@/constants/queryKeys";
 import { ResponseError } from "@/utils/errors/ResponseError";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/utils/constants";
 import { useCookies } from "react-cookie";
 
 async function signIn(email: string, password: string): Promise<User> {
@@ -42,7 +41,7 @@ export function useSignIn(): IUseSignIn {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [cookie,setCookie] = useCookies(['ACCESS_TOKEN','REFRESH_TOKEN'])
+  const [,setCookie] = useCookies(['ACCESS_TOKEN','REFRESH_TOKEN'])
   const { mutate: signInMutation } = useMutation<
     User,
     unknown,

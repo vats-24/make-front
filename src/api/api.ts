@@ -59,7 +59,8 @@ api.interceptors.response.use(
       try {
         const response = await axios.post('/users/auth/refresh-token', { refreshToken }, {
           baseURL: api.defaults.baseURL,
-          _retry: true // prevent this request from being intercepted
+          //@ts-ignore
+          _retry: true
         });
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;

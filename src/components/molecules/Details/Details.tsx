@@ -17,7 +17,7 @@ interface FormData {
   phoneNumber: string;
 }
 
-const Details: React.FC<DetailsProps> = ({ selectedStep,setData, setSelectedStep }) => {
+const Details: React.FC<DetailsProps> = ({ setData, setSelectedStep }) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [profileName, setProfileName] = useState<string>("");

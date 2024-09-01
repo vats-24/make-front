@@ -54,9 +54,9 @@ const Dashboard: React.FC = () => {
 
   const { data: filteredStats = {}, isLoading: isStatsLoading } = useGetStats(dateRange);
   const { data: barData, isLoading: isBarDataLoading } = useGetMonthlyServiceBookings();
-  const { data: topSessions, isLoading: isTopSessionsLoading } = useGetSessionBookings();
+  const { data: topSessions } = useGetSessionBookings();
   const { data: pieData, isLoading: isPieDataLoading } = useGetMonthlyEarnings();
-  const { data: profileData, isLoading, isError } = useGetprofileDetails();
+  const { data: profileData, isLoading } = useGetprofileDetails();
 
 
   const validTopSessions: Session[] = Array.isArray(topSessions) ? topSessions : [];

@@ -7,7 +7,6 @@ import type { User } from "./useUser";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { QUERY_KEY } from "@/constants/queryKeys";
-import { ACCESS_TOKEN } from "@/utils/constants";
 
 async function signUp(email: string, password: string) {
   const response = await fetch("", {

@@ -16,7 +16,7 @@ const Sidebar = () => {
     toast.success("You are successfully logged out. Please login using your registered google account to continue")
   }
 
-  const { data: profileData, isLoading, isError } = useGetprofileDetails();
+  const { data: profileData, isLoading } = useGetprofileDetails();
   if(isLoading) return <div>Loading</div>
   return (
     <div className="flex flex-col justify-between h-screen fixed top-0 left-0 w-96 p-4 bg-white">

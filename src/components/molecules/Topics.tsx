@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Topic } from "@/constants/Topic";
 import { ToggleGroup, ToggleGroupItem } from "@/components/atoms/ui/toggle-group";
 

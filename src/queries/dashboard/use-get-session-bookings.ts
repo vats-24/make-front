@@ -1,6 +1,5 @@
 import api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 const getSessionBookings = async () => {
   const token = localStorage.getItem("accessToken");

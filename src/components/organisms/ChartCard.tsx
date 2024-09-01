@@ -17,11 +17,6 @@ interface ServiceEarningsData {
   earnings: number;
 }
 
-interface EarningsData {
-  serviceEarnings: ServiceEarningsData[];
-  averageEarnings: number;
-}
-
 export const ChartCard: React.FC = () => {
   const [dateRange, setDateRange] = useState<string>("alldate");
 

@@ -1,4 +1,4 @@
-import { type UseMutationResult, useQuery, useMutation } from "@tanstack/react-query";
+import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import axios, { type AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 

@@ -1,23 +1,13 @@
 import SignIn from "@/components/organisms/SignIn";
-import React, { Suspense, lazy, useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import {
   createBrowserRouter,
-  Navigate,
   Outlet,
   RouterProvider,
-  useNavigate,
 } from "react-router-dom";
-import axios from "axios";
-import { getTokenFromLocalStorage } from "@/utils/helpers";
-import { ACCESS_TOKEN } from "@/utils/constants";
-import * as userLocalStorage from "../hooks/auth/user.localstore";
-import { jwtDecode } from "jwt-decode";
-
 import Sidebar from "@/components/organisms/Sidebar";
 import Jwt from "@/components/template/Jwt";
-import { useAuthInterceptor } from "@/hooks/interceptor/auth-interceptor";
 
-const baseURL = "http://localhost:3000";
 
 function ProtectedRoute() { 
   

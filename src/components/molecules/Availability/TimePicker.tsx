@@ -7,12 +7,7 @@ import {
 } from "@/components/atoms/ui/select";
 import {
   ChevronDownIcon,
-  PlusCircledIcon,
-  MinusCircledIcon,
 } from "@radix-ui/react-icons";
-
-import minus from "@assets/minus-circle.svg";
-import plus from "@assets/plus-circle.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -306,7 +301,7 @@ const WeekdayTimePicker: React.FC<WeekdayTimePickerProps> = ({ data, setData, ed
 
                   {timeslots.length > 1 && (
                     <div className="flex flex-col w-full space-y-2">
-                      {timeslots.slice(1).map((time: any, index: number) => (
+                      {timeslots.slice(1).map((_time: any, index: number) => (
                         <div
                           key={index}
                           className="flex items-center justify-between w-full"
@@ -401,7 +396,6 @@ const WeekdayTimePicker: React.FC<WeekdayTimePickerProps> = ({ data, setData, ed
         <button
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white w-full"
           onClick={() => {
-            const availabilityData = getAvailabilityData();
             handleNext();
           }}
           // disabled={error}
